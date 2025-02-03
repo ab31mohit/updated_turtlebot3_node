@@ -40,20 +40,20 @@ Odometry::Odometry(
   // Add support for initial pose (x, y, yaw) from YAML file
   // ========================================================
   // Declare parameters for initial pose
-  nh_->declare_parameter<double>("odometry.initial_x", 0.0);  // Default: 0.0
-  nh_->declare_parameter<double>("odometry.initial_y", 0.0);  // Default: 0.0
-  nh_->declare_parameter<double>("odometry.initial_yaw", 0.0); // Default: 0.0
+  nh_->declare_parameter<double>("odometry.initial_transform.x", 0.0);  // Default: 0.0
+  nh_->declare_parameter<double>("odometry.initial_transform.y", 0.0);  // Default: 0.0
+  nh_->declare_parameter<double>("odometry.initial_transform.yaw", 0.0); // Default: 0.0
 
-  // Retrieve initial pose values from the parameter server
-  double initial_x, initial_y, initial_yaw;
-  nh_->get_parameter_or<double>("odometry.initial_x", initial_x, 0.0);        // Read initial_x
-  nh_->get_parameter_or<double>("odometry.initial_y", initial_y, 0.0);        // Read initial_y
-  nh_->get_parameter_or<double>("odometry.initial_yaw", initial_yaw, 0.0);    // Read initial_yaw
+  // Retrieve initial transform (pose of base_footprint wrt. odom) values from the parameter server
+  double initial_tf_x, initial_tf_y, initial_tf_yaw;
+  nh_->get_parameter_or<double>("odometry.initial_transform.x", initial_tf_x, 0.0);        // Read initial_x
+  nh_->get_parameter_or<double>("odometry.initial_transform.y", initial_tf_y, 0.0);        // Read initial_y
+  nh_->get_parameter_or<double>("odometry.initial_transform.yaw", initial_tf_yaw, 0.0);    // Read initial_yaw
 
-  // Initialize robot_pose_ with the specified initial values
-  robot_pose_[0] = initial_x;  // x
-  robot_pose_[1] = initial_y;  // y
-  robot_pose_[2] = initial_yaw;  // yaw (orientation)
+  // Initialize robot_pose_ with the specified initial transform
+  robot_pose_[0] = initial_tf_x;  // x
+  robot_pose_[1] = initial_tf_y;  // y
+  robot_pose_[2] = initial_tf_yaw;  // yaw (orientation)
 
   // ========================================================
   // Rest of the constructor (unchanged)
@@ -83,9 +83,6 @@ Odometry::Odometry(
     "odometry.child_frame_id",
     child_frame_id_of_odometry_,
     std::string("base_footprint"));
-
-  // Publish the initial transform immediately
-  publish(nh_->now());
 
   // Set up publishers, subscribers, and message filters
   auto qos = rclcpp::QoS(rclcpp::KeepLast(10));
