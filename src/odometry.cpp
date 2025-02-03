@@ -46,9 +46,9 @@ Odometry::Odometry(
 
   // Retrieve initial pose values from the parameter server
   double initial_x, initial_y, initial_yaw;
-  nh_->get_parameter("odometry.initial_x", initial_x);        // Read initial_x
-  nh_->get_parameter("odometry.initial_y", initial_y);        // Read initial_y
-  nh_->get_parameter("odometry.initial_yaw", initial_yaw);    // Read initial_yaw
+  nh_->get_parameter_or<double>("odometry.initial_x", initial_x, 0.0);        // Read initial_x
+  nh_->get_parameter_or<double>("odometry.initial_y", initial_y, 0.0);        // Read initial_y
+  nh_->get_parameter_or<double>("odometry.initial_yaw", initial_yaw, 0.0);    // Read initial_yaw
 
   // Initialize robot_pose_ with the specified initial values
   robot_pose_[0] = initial_x;  // x
